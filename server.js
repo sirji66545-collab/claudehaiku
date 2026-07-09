@@ -4,13 +4,22 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Home
+app.get("/", (req, res) => {
+  res.json({
+    creator: "@sahilxalone",
+    message: "Claude Haiku API Running 🚀"
+  });
+});
+
+// Claude Haiku Endpoint
 app.get("/TG/@SAHILXALONE/ai/claudehaiku", async (req, res) => {
   const text = req.query.text;
 
   if (!text) {
     return res.status(400).json({
       creator: "@sahilxalone",
-      response: "Please provide ?text="
+      response: "Please provide ?text=Hello"
     });
   }
 
@@ -22,17 +31,24 @@ app.get("/TG/@SAHILXALONE/ai/claudehaiku", async (req, res) => {
     res.json({
       creator: "@sahilxalone",
       question: text,
-      response: data.response || data.data?.response || data.result || "No response"
+      response:
+        data?.data?.answer ||
+        data?.data?.response ||
+        data?.response ||
+        "No response"
     });
 
-  } catch (err) {
+  } catch (error) {
+    console.error(error.message);
+
     res.status(500).json({
       creator: "@sahilxalone",
-      response: "API Error"
+      question: text,
+      response: "Backend API Error"
     });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
